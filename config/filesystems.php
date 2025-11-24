@@ -59,6 +59,12 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        'public_path' => [
+            'driver' => 'local',
+            'root' => public_path(), // This uses the public directory
+            'url' => env('APP_URL') . '/public',
+            'visibility' => 'public',
+        ],
 
     ],
 

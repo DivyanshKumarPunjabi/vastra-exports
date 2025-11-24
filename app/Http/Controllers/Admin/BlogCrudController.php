@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\BlogRequest;
+use App\Models\Blog;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -16,7 +17,7 @@ class BlogCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    // use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
     /**
@@ -26,7 +27,7 @@ class BlogCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Blog::class);
+        CRUD::setModel(Blog::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/blog');
         CRUD::setEntityNameStrings('blog', 'blogs');
     }
@@ -39,12 +40,20 @@ class BlogCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        CRUD::column('title')->label('Blog Title');
+        CRUD::column('image')->type('image');
+        CRUD::column('short_desc')->label('Short Description');
+        CRUD::column('content')->label('Long Description');
+        CRUD::column('status')->label('Status')->type('checkbox');
+    }
 
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+    protected function setupShowOperation()
+    {
+        CRUD::column('title')->label('Blog Title');
+        CRUD::column('image')->type('image');
+        CRUD::column('short_desc')->label('Short Description');
+        CRUD::column('content')->label('Long Description');
+        CRUD::column('status')->label('Status')->type('checkbox');
     }
 
     /**
@@ -56,12 +65,38 @@ class BlogCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(BlogRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
 
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
+        CRUD::field('title')->label('Blog Title')->type('text')->attributes([
+            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
+            'title' => 'Please enter only alphabets and spaces',
+            'autocomplete' => 'off',
+        ])->size(6);
+
+        CRUD::field([
+            'name' => 'image',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/blog_images',
+            ],
+        ])->size(6);
+
+        CRUD::field('short_desc')->label('Short Description')->type('textarea')->size(6);
+        CRUD::field('content')->label('Long Description')->type('textarea')->size(6);
+        CRUD::field('status')->label('Status')->type('checkbox')->size(6);
+
+        $this->crud->replaceSaveActions([
+            'name' => 'save_action_one',
+            'redirect' => function ($crud, $request, $itemId) {
+                return backpack_url('blog');
+            },
+            // OPTIONAL:
+            'button_text' => 'Save and Back',
+            'visible' => function ($crud) {
+                return true;
+            },
+            'order' => 1
+        ]);
     }
 
     /**
