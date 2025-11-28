@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Blog;
-use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
