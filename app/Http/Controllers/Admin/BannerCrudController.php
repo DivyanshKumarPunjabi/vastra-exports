@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\EnquiryRequest;
+use App\Http\Requests\BannerRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class EnquiryCrudController
+ * Class BannerCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class EnquiryCrudController extends CrudController
+class BannerCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    // use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     // use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -26,9 +26,9 @@ class EnquiryCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Enquiry::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/enquiry');
-        CRUD::setEntityNameStrings('enquiry', 'enquiries');
+        CRUD::setModel(\App\Models\Banner::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/banner');
+        CRUD::setEntityNameStrings('banner', 'banners');
     }
 
     /**
@@ -55,13 +55,38 @@ class EnquiryCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(EnquiryRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
+        CRUD::setValidation(BannerRequest::class);
+        
+        CRUD::field('title')->label('Blog Title')->type('text')->attributes([
+            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
+            'title' => 'Please enter only alphabets and spaces',
+            'autocomplete' => 'off',
+        ])->size(6);
 
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
+        CRUD::field([
+            'name' => 'image',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/banner_images',
+            ],
+        ])->size(6);
+
+        CRUD::field('short_descp')->label('Short Description')->type('textarea')->size(6);
+        CRUD::field('status')->label('Status')->type('checkbox')->size(6);
+
+        $this->crud->replaceSaveActions([
+            'name' => 'save_action_one',
+            'redirect' => function ($crud, $request, $itemId) {
+                return backpack_url('blog');
+            },
+            // OPTIONAL:
+            'button_text' => 'Save and Back',
+            'visible' => function ($crud) {
+                return true;
+            },
+            'order' => 1
+        ]);
     }
 
     /**
@@ -72,39 +97,6 @@ class EnquiryCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        CRUD::field('first_name')->label('First Name')->type('text')->attributes([
-            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
-            'title' => 'Please enter only alphabets and spaces',
-            'autocomplete' => 'off',
-        ])->size(4);
-
-        CRUD::field('last_name')->label('Last Name')->type('text')->attributes([
-            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
-            'title' => 'Please enter only alphabets and spaces',
-            'autocomplete' => 'off',
-        ])->size(4);
-
-        CRUD::field('email')->label('Email')->type('email')->size(4);
-        CRUD::field('mobile')->type('text')->label('Mobile Number')
-            ->attributes([
-                'pattern' => '[0-9]{10}',
-                'maxlength' => 10,
-                'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);",
-                'title' => 'Please enter exactly 10 digits'
-            ])->size(4);
-        CRUD::field('message')->label('Enquiry Message')->type('textarea')->size(4);
-
-        $this->crud->replaceSaveActions([
-            'name' => 'save_action_one',
-            'redirect' => function ($crud, $request, $itemId) {
-                return backpack_url('enquiry');
-            },
-            // OPTIONAL:
-            'button_text' => 'Save and Back',
-            'visible' => function ($crud) {
-                return true;
-            },
-            'order' => 1
-        ]);
+        $this->setupCreateOperation();
     }
 }

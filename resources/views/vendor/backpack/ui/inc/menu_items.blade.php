@@ -3,3 +3,4 @@
 
 <x-backpack::menu-item title="Blogs" icon="la la-blog" :link="backpack_url('blog')" />
 <x-backpack::menu-item title="Enquiries" icon="la la-envelope" :link="backpack_url('enquiry')" />
+<x-backpack::menu-item title="Banners" icon="la la-question" :link="backpack_url('banner')" />
