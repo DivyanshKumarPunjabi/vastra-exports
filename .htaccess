@@ -3,6 +3,15 @@
         Options -MultiViews
     </IfModule>
 
+<IfModule mod_headers.c>
+    SetEnvIf Origin "^http(s)?://(localhost:3000|.*\.ngrok-free\.app)$" ORIGIN_OK=$0
+    Header always set Access-Control-Allow-Origin "%{ORIGIN_OK}e" env=ORIGIN_OK
+    Header always set Access-Control-Allow-Credentials "true"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+</IfModule>
+
+
     RewriteEngine On
 
     RewriteCond %{REQUEST_FILENAME} -d [OR]

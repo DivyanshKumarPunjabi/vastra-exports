@@ -42,7 +42,7 @@ class EnquiryController extends ApiBaseController
 
             $validated = $validator->validated();
 
-            $enquiry = Enquiry::create($validated);
+            Enquiry::create($validated);
 
             return response()->json([
                 'success' => true,
