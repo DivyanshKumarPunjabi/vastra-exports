@@ -45,8 +45,12 @@ class EnquiryController extends ApiBaseController
             Enquiry::create($validated);
 
             return response()->json([
-                'success' => true,
-                'message' => 'Enquiry submitted successfully.',
+                // 'message' => 'Enquiry submitted successfully.',
+                'data' => [
+                    'success' => true,
+                    'message' => 'Enquiry submitted successfully.',
+                    // 'enquiry' => $enquiry->makeHidden(['created_at', 'updated_at']),
+                ],
                 // 'data' => $enquiry->makeHidden(['created_at', 'updated_at']),
             ], 200);
         } catch (Exception $e) {

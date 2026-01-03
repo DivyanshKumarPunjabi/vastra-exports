@@ -12,6 +12,4 @@ Route::get('/user', function (Request $request) {
 // Route::post('/update-club-records', [BlogController::class, 'updateClubRecords']);
 Route::get('home-page', [HomePageController::class, 'getHomePageData']);
 
-Route::prefix('support')->group(function () {
-    Route::post('enquiry-submit', [EnquiryController::class, 'submitEnquiry']);
-});
+Route::post('support/enquiry-submit', [EnquiryController::class, 'submitEnquiry']);
