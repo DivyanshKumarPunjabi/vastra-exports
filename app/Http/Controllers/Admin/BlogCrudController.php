@@ -6,6 +6,7 @@ use App\Http\Requests\BlogRequest;
 use App\Models\Blog;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Str;
 
 /**
  * Class BlogCrudController
@@ -15,7 +16,9 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 class BlogCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+        store as traitBlogStore;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     // use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -72,6 +75,24 @@ class BlogCrudController extends CrudController
             'autocomplete' => 'off',
         ])->size(6);
 
+        // CRUD::field([   // Text
+        //     'name' => 'slug',
+        //     'target' => 'title', // will turn the title input into a slug
+        //     'label' => "Slug",
+        //     'type' => 'slug',
+        //     // 'translation' => true,
+        //     // optional
+        //     'locale' => 'pt', // locale to use, defaults to app()->getLocale()
+        //     'separator' => '', // separator to use
+        //     'trim' => true, // trim whitespace
+        //     'lower' => true, // convert to lowercase
+        //     'strict' => true, // strip special characters except replacement
+        //     'remove' => '/[*+~()!:@]/g', // remove characters to match regex, defaults to null
+        //     'attributes' => [
+        //         'readonly' => true,
+        //     ],
+        // ])->size(6);
+
         CRUD::field([
             'name' => 'image',
             'type' => 'upload',
@@ -97,6 +118,35 @@ class BlogCrudController extends CrudController
             },
             'order' => 1
         ]);
+    }
+
+    public function store()
+    {
+        $this->crud->setRequest($this->crud->validateRequest());
+        $this->crud->unsetValidation();
+
+        $request = $this->crud->getRequest();
+        
+        // 2. Generate base slug
+        $baseSlug = Str::slug($request->title);
+
+        // 3. Ensure UNIQUE slug
+        $slug = $baseSlug;
+        $count = 1;
+
+        while (Blog::where('slug', $slug)->exists()) {
+            $slug = $baseSlug;
+            $count++;
+        }
+
+        // 4. Merge slug into request
+        $request->merge(['slug' => $slug]);
+        // 5. Store
+        $this->crud->setRequest($request);
+        
+        $result = $this->traitBlogStore();
+
+        return redirect(backpack_url('blog'));
     }
 
     /**

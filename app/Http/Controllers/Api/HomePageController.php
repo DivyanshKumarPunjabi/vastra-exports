@@ -16,7 +16,10 @@ class HomePageController extends ApiBaseController
                     ? asset($blog->image)
                     : null;
 
-                return $blog->makeHidden(['created_at', 'updated_at']);
+                $blog->short_desc = trim(preg_replace("/\r|\n/", ' ', $blog->short_desc));
+                $blog->content    = trim(preg_replace("/\r|\n/", ' ', $blog->content));
+
+                return $blog->makeHidden(['created_at', 'updated_at', 'id']);
             });
 
             return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs]);

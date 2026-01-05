@@ -53,4 +53,13 @@ class Blog extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
+
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'slug_or_title',
+            ],
+        ];
+    }
 }
