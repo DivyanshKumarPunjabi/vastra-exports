@@ -97,16 +97,7 @@ class ProductCrudController extends CrudController
         //     ->store_as_json(true)
         //     ->wrapper(['class' => 'form-group col-md-6']);
 
-        CRUD::addField([
-            'name'  => 'images',
-            'label' => 'Product Images',
-            'type'  => 'view',
-            'view'  => 'vendor.backpack.fields.multiple_file_input',
-            'hint'  => 'You can upload multiple images',
-            'wrapper' => [
-                'class' => 'form-group col-md-6'
-            ],
-        ]);
+    
     }
 
     public function store()

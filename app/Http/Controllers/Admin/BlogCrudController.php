@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\BlogRequest;
+use App\Http\Requests\BlogUpdateRequest;
 use App\Models\Blog;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -75,24 +76,6 @@ class BlogCrudController extends CrudController
             'autocomplete' => 'off',
         ])->size(6);
 
-        // CRUD::field([   // Text
-        //     'name' => 'slug',
-        //     'target' => 'title', // will turn the title input into a slug
-        //     'label' => "Slug",
-        //     'type' => 'slug',
-        //     // 'translation' => true,
-        //     // optional
-        //     'locale' => 'pt', // locale to use, defaults to app()->getLocale()
-        //     'separator' => '', // separator to use
-        //     'trim' => true, // trim whitespace
-        //     'lower' => true, // convert to lowercase
-        //     'strict' => true, // strip special characters except replacement
-        //     'remove' => '/[*+~()!:@]/g', // remove characters to match regex, defaults to null
-        //     'attributes' => [
-        //         'readonly' => true,
-        //     ],
-        // ])->size(6);
-
         CRUD::field([
             'name' => 'image',
             'type' => 'upload',
@@ -157,6 +140,38 @@ class BlogCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        CRUD::setValidation(BlogUpdateRequest::class);
+
+        CRUD::field('title')->label('Blog Title')->type('text')->attributes([
+            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
+            'title' => 'Please enter only alphabets and spaces',
+            'autocomplete' => 'off',
+        ])->size(6);
+
+        CRUD::field([
+            'name' => 'image',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/blog_images',
+            ],
+        ])->size(6);
+
+        CRUD::field('short_desc')->label('Short Description')->type('textarea')->size(6);
+        CRUD::field('content')->label('Long Description')->type('textarea')->size(6);
+        CRUD::field('status')->label('Status')->type('checkbox')->size(6);
+
+        $this->crud->replaceSaveActions([
+            'name' => 'save_action_one',
+            'redirect' => function ($crud, $request, $itemId) {
+                return backpack_url('blog');
+            },
+            // OPTIONAL:
+            'button_text' => 'Save and Back',
+            'visible' => function ($crud) {
+                return true;
+            },
+            'order' => 1
+        ]);
     }
 }
