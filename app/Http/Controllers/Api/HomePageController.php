@@ -19,7 +19,7 @@ class HomePageController extends ApiBaseController
                 $blog->short_desc = trim(preg_replace("/\r|\n/", ' ', $blog->short_desc));
                 $blog->content    = trim(preg_replace("/\r|\n/", ' ', $blog->content));
 
-                return $blog->makeHidden(['created_at', 'updated_at', 'id']);
+                return $blog->makeHidden(['created_at', 'updated_at']);
             });
 
             return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs]);
