@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\BannerRequest;
+use App\Http\Requests\BannerUpdateRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -39,12 +40,18 @@ class BannerCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        CRUD::column('title')->label('Banner Title');
+        CRUD::column('image')->type('image');
+        CRUD::column('short_descp')->label('Description');
+        CRUD::column('status')->label('Status')->type('checkbox');
+    }
 
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+    protected function setupShowOperation()
+    {
+        CRUD::column('title')->label('Banner Title');
+        CRUD::column('image')->type('image');
+        CRUD::column('short_descp')->label('Description');
+        CRUD::column('status')->label('Status')->type('checkbox');
     }
 
     /**
@@ -56,8 +63,8 @@ class BannerCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(BannerRequest::class);
-        
-        CRUD::field('title')->label('Blog Title')->type('text')->attributes([
+
+        CRUD::field('title')->label('Banner Title')->type('text')->attributes([
             'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
             'title' => 'Please enter only alphabets and spaces',
             'autocomplete' => 'off',
@@ -78,7 +85,7 @@ class BannerCrudController extends CrudController
         $this->crud->replaceSaveActions([
             'name' => 'save_action_one',
             'redirect' => function ($crud, $request, $itemId) {
-                return backpack_url('blog');
+                return backpack_url('banner');
             },
             // OPTIONAL:
             'button_text' => 'Save and Back',
@@ -97,6 +104,36 @@ class BannerCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        CRUD::setValidation(BannerUpdateRequest::class);
+        CRUD::field('title')->label('Banner Title')->type('text')->attributes([
+            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
+            'title' => 'Please enter only alphabets and spaces',
+            'autocomplete' => 'off',
+        ])->size(6);
+
+        CRUD::field([
+            'name' => 'image',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/banner_images',
+            ],
+        ])->size(6);
+
+        CRUD::field('short_descp')->label('Short Description')->type('textarea')->size(6);
+        CRUD::field('status')->label('Status')->type('checkbox')->size(6);
+
+        $this->crud->replaceSaveActions([
+            'name' => 'save_action_one',
+            'redirect' => function ($crud, $request, $itemId) {
+                return backpack_url('banner');
+            },
+            // OPTIONAL:
+            'button_text' => 'Save and Back',
+            'visible' => function ($crud) {
+                return true;
+            },
+            'order' => 1
+        ]);
     }
 }
