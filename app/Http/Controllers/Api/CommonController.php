@@ -14,16 +14,34 @@ class CommonController extends ApiBaseController
     public function getAllBlogs()
     {
         try {
-            $blogs = Blog::where('status', 1)->orderBy('id', 'desc')->get()->map(function ($blog) {
-                $blog->image = $blog->image
-                    ? asset($blog->image)
-                    : null;
+            $blogs = Blog::where('status', 1)
+                ->orderBy('id', 'desc')
+                ->paginate(12);
 
-                $blog->short_desc = trim(preg_replace("/\r|\n/", ' ', $blog->short_desc));
-                $blog->content    = trim(preg_replace("/\r|\n/", ' ', $blog->content));
+            $blogs->getCollection()
+                ->transform(function ($blog) {
 
-                return $blog->makeHidden(['created_at', 'updated_at', 'slug']);
-            });
+                    if (!$blog) {
+                        return null;
+                    }
+
+                    $blog->image = $blog->image
+                        ? asset($blog->image)
+                        : null;
+
+                    $blog->short_desc = trim(preg_replace("/\r|\n/", ' ', $blog->short_desc));
+                    $blog->content    = trim(preg_replace("/\r|\n/", ' ', $blog->content));
+
+                    // ✅ Same tags logic
+                    $blog->tags = collect(
+                        is_string($blog->tags) ? explode(',', $blog->tags) : []
+                    )
+                        ->map(fn($tag) => '#' . ltrim(trim($tag), '#'))
+                        ->values()
+                        ->toArray();
+
+                    return $blog->makeHidden(['updated_at', 'slug']);
+                });
 
             return $this->sendResponse(true, 'Blogs data found', ['blogs' => $blogs]);
         } catch (Exception $e) {
@@ -68,14 +86,18 @@ class CommonController extends ApiBaseController
                 return $this->sendResponse(false, 'Blog not found.');
             }
 
-            // 3. Transform response
             $blog->image = $blog->image ? asset($blog->image) : null;
             $blog->short_desc = trim(preg_replace("/\r|\n/", ' ', $blog->short_desc));
             $blog->content    = trim(preg_replace("/\r|\n/", ' ', $blog->content));
 
-            $blog->makeHidden(['created_at', 'updated_at']);
+            $blog->tags = collect(
+                is_string($blog->tags) ? explode(',', $blog->tags) : []
+            )
+                ->map(fn($tag) => '#' . ltrim(trim($tag), '#'))
+                ->values()
+                ->toArray();
+            $blog->makeHidden(['updated_at', 'slug']);
 
-            // 4. Success response
             return $this->sendResponse(true, 'Blog details found', [
                 'blog' => $blog,
             ]);

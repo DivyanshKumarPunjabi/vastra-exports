@@ -12,16 +12,34 @@ class HomePageController extends ApiBaseController
     public function getHomePageData()
     {
         try {
-            $blogs = Blog::where('status', 1)->orderBy('id', 'desc')->limit(6)->get()->map(function ($blog) {
-                $blog->image = $blog->image
-                    ? asset($blog->image)
-                    : null;
+            $blogs = Blog::where('status', 1)
+                ->orderBy('id', 'desc')
+                ->limit(6)
+                ->get()
+                ->map(function ($blog) {
 
-                $blog->short_desc = trim(preg_replace("/\r|\n/", ' ', $blog->short_desc));
-                $blog->content    = trim(preg_replace("/\r|\n/", ' ', $blog->content));
+                    if (!$blog) {
+                        return null;
+                    }
 
-                return $blog->makeHidden(['created_at', 'updated_at', 'slug']);
-            });
+                    $blog->image = $blog->image
+                        ? asset($blog->image)
+                        : null;
+
+                    $blog->short_desc = trim(preg_replace("/\r|\n/", ' ', $blog->short_desc));
+                    $blog->content    = trim(preg_replace("/\r|\n/", ' ', $blog->content));
+
+                    // ✅ Always initialize tags
+                    $blog->tags = collect(
+                        is_string($blog->tags) ? explode(',', $blog->tags) : []
+                    )
+                        ->map(fn($tag) => '#' . ltrim(trim($tag), '#'))
+                        ->values()
+                        ->toArray();
+
+                    return $blog->makeHidden(['updated_at', 'slug']);
+                })
+                ->filter(); // remove nulls
 
             $banners = Banner::where('status', 1)->orderBy('id', 'desc')->get()->map(function ($banner) {
                 $banner->image = $banner->image

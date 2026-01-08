@@ -87,6 +87,7 @@ class BlogCrudController extends CrudController
 
         CRUD::field('short_desc')->label('Short Description')->type('textarea')->size(6);
         CRUD::field('content')->label('Long Description')->type('textarea')->size(6);
+        CRUD::field('tags')->label('Tags')->type('text')->hint('Please separate the different tags by `,`')->size(6);
         CRUD::field('status')->label('Status')->type('checkbox')->size(6);
 
         $this->crud->replaceSaveActions([
@@ -159,6 +160,7 @@ class BlogCrudController extends CrudController
 
         CRUD::field('short_desc')->label('Short Description')->type('textarea')->size(6);
         CRUD::field('content')->label('Long Description')->type('textarea')->size(6);
+        CRUD::field('tags')->label('Tags')->type('text')->hint('Please separate the different tags by `,`')->size(6);
         CRUD::field('status')->label('Status')->type('checkbox')->size(6);
 
         $this->crud->replaceSaveActions([
