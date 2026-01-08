@@ -16,3 +16,4 @@ Route::post('support/enquiry-submit', [EnquiryController::class, 'submitEnquiry'
 Route::get('get-all-blogs', [CommonController::class, 'getAllBlogs']);
 Route::get('get-all-product-categories', [CommonController::class, 'getProductCategories']);
 Route::post('get-blog-details',[CommonController::class, 'getBlogDetails']);
+Route::post('search-items',[CommonController::class, 'getItemsSearch']);

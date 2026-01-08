@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\ProductCategoryRequest;
 use App\Http\Requests\ProductCategoryUpdateRequest;
+use App\Models\ProductCategory;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -15,9 +16,12 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 class ProductCategoryCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+        store as traitCategoryStore;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ReorderOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -39,12 +43,8 @@ class ProductCategoryCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
-
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+        $this->crud->addClause('orderBy', 'lft', 'asc');
+        CRUD::column('name')->label('Category Name');
     }
 
     /**
@@ -76,6 +76,26 @@ class ProductCategoryCrudController extends CrudController
         ]);
     }
 
+    public function store()
+    {
+        $this->crud->setRequest($this->crud->validateRequest());
+        $this->crud->unsetValidation();
+
+        $result = $this->traitCategoryStore();
+
+        $id = $this->crud->entry->id;
+        $lft = $id + 1;
+        $rgt = $id + 1;
+
+        ProductCategory::find($id)->update([
+            'lft' => $lft,
+            'rgt' => $rgt,
+            'depth' => 1,
+        ]);
+
+        return $result;
+    }
+
     /**
      * Define what happens when the Update operation is loaded.
      * 
@@ -103,5 +123,11 @@ class ProductCategoryCrudController extends CrudController
             },
             'order' => 1
         ]);
+    }
+
+    protected function setupReorderOperation()
+    {
+        CRUD::set('reorder.label', 'name');
+        CRUD::set('reorder.max_level', 5);
     }
 }
