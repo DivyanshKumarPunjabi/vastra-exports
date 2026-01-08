@@ -54,7 +54,7 @@ class CommonController extends ApiBaseController
     {
         try {
             $getCategories = ProductCategory::orderBy('lft', 'ASC')->get();
-            $getCategories->makeHidden(['created_at', 'updated_at']);
+            $getCategories->makeHidden(['created_at', 'updated_at', 'parent_id', 'lft', 'rgt', 'depth']);
 
             return $this->sendResponse(true, 'Product Category data found', ['categories_data' => $getCategories]);
         } catch (Exception $e) {
