@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -19,8 +21,8 @@ class ProductCrudController extends CrudController
         store as traitProductStore;
     }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\ReorderOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -29,7 +31,7 @@ class ProductCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Product::class);
+        CRUD::setModel(Product::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/product');
         CRUD::setEntityNameStrings('product', 'products');
     }
@@ -42,12 +44,64 @@ class ProductCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        $this->crud->disableResponsiveTable();
+        CRUD::column('title')
+            ->type('text')
+            ->label('Product Title');
 
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+        CRUD::column('category_id')
+            ->label('Product Category')
+            ->type('text')
+            ->value(function ($entry) {
+
+                if (!$entry->category_id) {
+                    return '-';
+                }
+
+                $sp = ProductCategory::withoutGlobalScopes()
+                    ->find($entry->category_id);
+
+                return $sp ? $sp->name  : '-';
+            });
+
+        CRUD::column('description')
+            ->type('textarea')
+            ->label('Description');
+
+        CRUD::column('gsm')
+            ->type('number')
+            ->label('GSM')
+            ->attributes(['min' => 0]);
+
+        CRUD::column('moq')
+            ->type('number')
+            ->label('MOQ')
+            ->attributes(['min' => 1]);
+
+        CRUD::column([
+            'name' => 'image',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_1',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_2',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_3',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_4',
+            'type' => 'image',
+        ]);
     }
 
     /**
@@ -59,16 +113,17 @@ class ProductCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(ProductRequest::class);
-        $this->crud->setOperationSetting('hasUploadFields', true);
-        $this->crud->setOperationSetting('formAttributes', [
-            'enctype' => 'multipart/form-data',
-        ]);
 
-
-
+        $productCategories = ProductCategory::pluck('name', 'id')->toArray();
         CRUD::field('title')
             ->type('text')
             ->label('Product Title')
+            ->wrapper(['class' => 'form-group col-md-6']);
+
+        CRUD::field('category_id')
+            ->type('select_from_array')
+            ->options($productCategories)
+            ->label('Product Categories')
             ->wrapper(['class' => 'form-group col-md-6']);
 
         CRUD::field('description')
@@ -86,51 +141,74 @@ class ProductCrudController extends CrudController
             ->type('number')
             ->label('MOQ')
             ->attributes(['min' => 1])
-            ->wrapper(['class' => 'form-group col-md-6']);
+            ->wrapper(['class' => 'form-group col-md-4']);
 
-        // CRUD::field('images')
-        //     ->type('file_multiple')
-        //     ->label('Product Images')
-        //     ->upload(true)
-        //     ->disk('public_root')
-        //     ->prefix('uploads/product-photo/')
-        //     ->store_as_json(true)
-        //     ->wrapper(['class' => 'form-group col-md-6']);
+        CRUD::field([
+            'name' => 'image',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
 
-    
+        CRUD::field([
+            'name' => 'image_1',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_2',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_3',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_4',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
     }
 
     public function store()
     {
-        // $this->crud->setRequest($this->crud->validateRequest());
-        // $this->crud->unsetValidation(); // validation has already been run
-        // dd($this->crud->getRequest());
+        $this->crud->setRequest($this->crud->validateRequest());
+        $this->crud->unsetValidation();
 
-        $this->crud->validateRequest();
-        $request = request();
-        // dd($request);
-        dd($request->file('images'));
-        $imagePaths = [];
+        $result = $this->traitProductStore();
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $name = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('uploads/product-photo'), $name);
-                $imagePaths[] = 'uploads/product-photo/' . $name;
-            }
-        }
-        Product::create([
-            'title' => $this->crud->getRequest()->title,
-            'description' => $this->crud->getRequest()->description,
-            'gsm' => $this->crud->getRequest()->gsm,
-            'moq' => $this->crud->getRequest()->moq,
-            'images' => json_encode($imagePaths),
-            'updated_at' => date('Y-m-d H:i:s'),
-            'created_at' => date('Y-m-d H:i:s')
+        $id = $this->crud->entry->id;
+        $lft = $id + 1;
+        $rgt = $id + 1;
+
+        Product::find($id)->update([
+            'lft' => $lft,
+            'rgt' => $rgt,
+            'depth' => 1,
         ]);
 
-        return redirect(backpack_url('product'));
+        return $result;
     }
+
     /**
      * Define what happens when the Update operation is loaded.
      * 
@@ -139,6 +217,86 @@ class ProductCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        CRUD::setValidation(ProductUpdateRequest::class);
+
+        $productCategories = ProductCategory::pluck('name', 'id')->toArray();
+        CRUD::field('title')
+            ->type('text')
+            ->label('Product Title')
+            ->wrapper(['class' => 'form-group col-md-6']);
+
+        CRUD::field('category_id')
+            ->type('select_from_array')
+            ->options($productCategories)
+            ->label('Product Categories')
+            ->wrapper(['class' => 'form-group col-md-6']);
+
+        CRUD::field('description')
+            ->type('textarea')
+            ->label('Description')
+            ->wrapper(['class' => 'form-group col-md-6']);
+
+        CRUD::field('gsm')
+            ->type('number')
+            ->label('GSM')
+            ->attributes(['min' => 0])
+            ->wrapper(['class' => 'form-group col-md-6']);
+
+        CRUD::field('moq')
+            ->type('number')
+            ->label('MOQ')
+            ->attributes(['min' => 1])
+            ->wrapper(['class' => 'form-group col-md-4']);
+
+        CRUD::field([
+            'name' => 'image',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_1',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_2',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_3',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_4',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+    }
+
+    protected function setupReorderOperation()
+    {
+        CRUD::set('reorder.label', 'title');
+        CRUD::set('reorder.max_level', 5);
     }
 }

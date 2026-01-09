@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Banner;
 use App\Models\Blog;
+use App\Models\Setting;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -50,7 +51,10 @@ class HomePageController extends ApiBaseController
 
                 return $banner->makeHidden(['created_at', 'updated_at']);
             });
-            return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs, 'banners' => $banners]);
+
+            $setting = Setting::all();
+            $setting->makeHidden(['field', 'active', 'created_at', 'updated_at']);
+            return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs, 'banners' => $banners, 'setting' => $setting]);
         } catch (Exception $e) {
             Log::error('error in getBlogs', ['message' => $e->getMessage()]);
             return $this->sendCatchLog($e->getMessage());
