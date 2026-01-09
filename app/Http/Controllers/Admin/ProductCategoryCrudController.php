@@ -30,7 +30,7 @@ class ProductCategoryCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\ProductCategory::class);
+        CRUD::setModel(ProductCategory::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/product-category');
         CRUD::setEntityNameStrings('product category', 'product categories');
     }

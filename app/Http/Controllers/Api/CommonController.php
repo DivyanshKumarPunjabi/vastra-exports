@@ -168,8 +168,8 @@ class CommonController extends ApiBaseController
             }
 
             $type  = $request->type;
-            $query = trim($request->query);
-
+            $query = trim($request->input('query', ''));
+            $query = trim($query);
             /* ================= BLOG SEARCH ================= */
             if ($type === 'blog') {
 
