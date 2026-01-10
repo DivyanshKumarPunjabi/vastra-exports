@@ -51,10 +51,16 @@ class HomePageController extends ApiBaseController
 
                 return $banner->makeHidden(['created_at', 'updated_at']);
             });
-
+            $latitude = 26.9851597;
+            $longitude = 75.7589829;
             $setting = Setting::all();
+            $mapEmbedUrl = "https://www.google.com/maps?q={$latitude},{$longitude}&z=15&output=embed";
+            $mapViewUrl  = "https://www.google.com/maps?q={$latitude},{$longitude}";
             $setting->makeHidden(['field', 'active', 'created_at', 'updated_at']);
-            return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs, 'banners' => $banners, 'setting' => $setting]);
+            return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs, 'banners' => $banners, 'setting' => $setting, 'map' => [
+                'embed_url' => $mapEmbedUrl,   // ✅ for iframe
+                'view_url'  => $mapViewUrl     // ✅ for click
+            ]]);
         } catch (Exception $e) {
             Log::error('error in getBlogs', ['message' => $e->getMessage()]);
             return $this->sendCatchLog($e->getMessage());

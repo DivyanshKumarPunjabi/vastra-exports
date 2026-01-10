@@ -230,6 +230,41 @@ class CommonController extends ApiBaseController
         }
     }
 
+    // public function getAllProducts()
+    // {
+    //     try {
+    //         $products = Product::with('category:id,name')
+    //             ->orderBy('lft', 'ASC')
+    //             ->get()
+    //             ->map(function ($product) {
+    //                 $product->category_name = $product->category->name ?? null;
+
+    //                 // hide unwanted fields
+    //                 $product->makeHidden([
+    //                     'created_at',
+    //                     'updated_at',
+    //                     'parent_id',
+    //                     'lft',
+    //                     'rgt',
+    //                     'depth',
+    //                     'category',
+    //                 ]);
+
+    //                 return $product;
+    //             });
+
+    //         return $this->sendResponse(true, 'Products data found', [
+    //             'products_data' => $products
+    //         ]);
+    //     } catch (Exception $e) {
+    //         Log::error('error in getAllProducts', [
+    //             'message' => $e->getMessage()
+    //         ]);
+
+    //         return $this->sendCatchLog($e->getMessage());
+    //     }
+    // }
+
     public function getAllProducts()
     {
         try {
@@ -237,10 +272,28 @@ class CommonController extends ApiBaseController
                 ->orderBy('lft', 'ASC')
                 ->get()
                 ->map(function ($product) {
+
+                    // ✅ Category name
                     $product->category_name = $product->category->name ?? null;
 
-                    // hide unwanted fields
+                    // ✅ Images as array with full URL
+                    $images = [];
+
+                    foreach (['image', 'image_1', 'image_2', 'image_3', 'image_4'] as $field) {
+                        if (!empty($product->$field)) {
+                            $images[] = asset($product->$field);
+                        }
+                    }
+
+                    $product->images = $images;
+
+                    // ❌ Remove old image fields + unwanted columns
                     $product->makeHidden([
+                        'image',
+                        'image_1',
+                        'image_2',
+                        'image_3',
+                        'image_4',
                         'created_at',
                         'updated_at',
                         'parent_id',
@@ -257,13 +310,59 @@ class CommonController extends ApiBaseController
                 'products_data' => $products
             ]);
         } catch (Exception $e) {
-            Log::error('error in getAllProducts', [
-                'message' => $e->getMessage()
-            ]);
-
+            Log::error('error in getAllProducts', ['message' => $e->getMessage()]);
             return $this->sendCatchLog($e->getMessage());
         }
     }
+
+
+    // public function getProductDetails(Request $request)
+    // {
+    //     try {
+    //         $validator = Validator::make($request->all(), [
+    //             'product_id' => 'required|exists:products,id',
+    //         ], [
+    //             'product_id.required' => 'Product ID is required.',
+    //             'product_id.exists'   => 'Product not found.',
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return $this->sendResponse(false, $validator->errors()->first());
+    //         }
+
+    //         $product = Product::with('category:id,name')
+    //             ->where('id', $request->product_id)
+    //             ->first();
+
+    //         $relatedProducts = Product::where('category_id', $product->category_id)
+    //             ->with('category:id,name')
+    //             ->where('id', '!=', $product->id)
+    //             ->select('id', 'title', 'category_id')
+    //             ->get();
+
+    //         $productData = $product->makeHidden([
+    //             'created_at',
+    //             'updated_at',
+    //             'parent_id',
+    //             'lft',
+    //             'rgt',
+    //             'depth',
+    //             'category',
+    //             'gsm',
+    //             'moq',
+    //         ]);
+
+    //         $productData->category_name = $product->category->name ?? null;
+
+    //         return $this->sendResponse(true, 'Product data found', [
+    //             'product'          => $productData,
+    //             'related_products' => $relatedProducts,
+    //         ]);
+    //     } catch (Exception $e) {
+    //         Log::error('error in getProductDetails', ['message' => $e->getMessage()]);
+    //         return $this->sendCatchLog($e->getMessage());
+    //     }
+    // }
 
     public function getProductDetails(Request $request)
     {
@@ -279,34 +378,71 @@ class CommonController extends ApiBaseController
                 return $this->sendResponse(false, $validator->errors()->first());
             }
 
+            // 🔹 Main Product
             $product = Product::with('category:id,name')
                 ->where('id', $request->product_id)
                 ->first();
 
-            $relatedProducts = Product::where('category_id', $product->category_id)
+            if (!$product) {
+                return $this->sendResponse(false, 'Product not found.');
+            }
+
+            // 🔹 Format main product
+            $product = $this->formatProduct($product);
+
+            // 🔹 Related products (same category)
+            $relatedProducts = Product::with('category:id,name')
+                ->where('category_id', $product->category_id)
                 ->where('id', '!=', $product->id)
-                ->select('id', 'title', 'category_id', 'gsm', 'moq')
-                ->get();
-
-            $productData = $product->makeHidden([
-                'created_at',
-                'updated_at',
-                'parent_id',
-                'lft',
-                'rgt',
-                'depth',
-                'category',
-            ]);
-
-            $productData->category_name = $product->category->name ?? null;
+                ->get()
+                ->map(function ($item) {
+                    return $this->formatProduct($item);
+                });
 
             return $this->sendResponse(true, 'Product data found', [
-                'product'          => $productData,
+                'product'          => $product,
                 'related_products' => $relatedProducts,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error('error in getProductDetails', ['message' => $e->getMessage()]);
             return $this->sendCatchLog($e->getMessage());
         }
+    }
+
+    private function formatProduct($product)
+    {
+        // Category name
+        $product->category_name = $product->category->name ?? null;
+
+        // Images array with full URL
+        $images = [];
+        foreach (['image', 'image_1', 'image_2', 'image_3', 'image_4'] as $field) {
+            if (!empty($product->$field)) {
+                $images[] = asset($product->$field);
+            }
+        }
+
+        $product->images = $images;
+
+        // Hide unwanted fields
+        $product->makeHidden([
+            'image',
+            'image_1',
+            'image_2',
+            'image_3',
+            'image_4',
+            'created_at',
+            'updated_at',
+            'parent_id',
+            'lft',
+            'rgt',
+            'depth',
+            'category',
+            'gsm',
+            'moq',
+            'stock_status'
+        ]);
+
+        return $product;
     }
 }

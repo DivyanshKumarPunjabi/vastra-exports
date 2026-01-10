@@ -28,8 +28,12 @@ class ProductUpdateRequest extends FormRequest
             'title'       => 'required|string|min:3|max:255',
             'category_id' => 'required|exists:product_categories,id',
             'description' => 'required|string',
-            'gsm'         => 'nullable|integer|min:0',
-            'moq'         => 'nullable|integer|min:1',
+            // 'gsm'         => 'nullable|integer|min:0',
+            // 'moq'         => 'nullable|integer|min:1',
+
+            'fabric'       => 'required|string|max:100',
+            'style_code'   => 'required|string|max:100',
+            'stock_status' => 'nullable|in:in_stock,out_of_stock',
 
             'image'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'image_1' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',

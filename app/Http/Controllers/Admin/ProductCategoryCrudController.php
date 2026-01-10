@@ -17,7 +17,7 @@ class ProductCategoryCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
-        store as traitCategoryStore;
+        store as traitProductCategoryStore;
     }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -43,7 +43,7 @@ class ProductCategoryCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        $this->crud->addClause('orderBy', 'lft', 'asc');
+        $this->crud->addClause('orderBy', '_lft', 'asc');
         CRUD::column('name')->label('Category Name');
     }
 
@@ -57,8 +57,8 @@ class ProductCategoryCrudController extends CrudController
     {
         CRUD::setValidation(ProductCategoryRequest::class);
         CRUD::field('name')->label('Category Name')->type('text')->attributes([
-            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
-            'title' => 'Please enter only alphabets and spaces',
+            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s\\(\\)\\[\\]&/-]/g, '');",
+            'title' => 'Only alphabets, spaces, (), and [] are allowed',
             'autocomplete' => 'off',
         ])->size(6);
 
@@ -81,15 +81,15 @@ class ProductCategoryCrudController extends CrudController
         $this->crud->setRequest($this->crud->validateRequest());
         $this->crud->unsetValidation();
 
-        $result = $this->traitCategoryStore();
+        $result = $this->traitProductCategoryStore();
 
         $id = $this->crud->entry->id;
         $lft = $id + 1;
         $rgt = $id + 1;
 
         ProductCategory::find($id)->update([
-            'lft' => $lft,
-            'rgt' => $rgt,
+            '_lft' => $lft,
+            '_rgt' => $rgt,
             'depth' => 1,
         ]);
 
@@ -106,8 +106,8 @@ class ProductCategoryCrudController extends CrudController
     {
         CRUD::setValidation(ProductCategoryUpdateRequest::class);
         CRUD::field('name')->label('Category Name')->type('text')->attributes([
-            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\s]/g, '');",
-            'title' => 'Please enter only alphabets and spaces',
+            'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s\\(\\)\\[\\]&/-]/g, '');",
+            'title' => 'Only alphabets, spaces, (), and [] are allowed',
             'autocomplete' => 'off',
         ])->size(6);
 

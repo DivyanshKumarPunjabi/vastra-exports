@@ -66,17 +66,16 @@ class ProductCrudController extends CrudController
 
         CRUD::column('description')
             ->type('textarea')
-            ->label('Description');
+            ->label('Description')
+            ->limit(50);
 
-        CRUD::column('gsm')
-            ->type('number')
-            ->label('GSM')
-            ->attributes(['min' => 0]);
+        CRUD::column('fabric')
+            ->type('text')
+            ->label('Fabric');
 
-        CRUD::column('moq')
-            ->type('number')
-            ->label('MOQ')
-            ->attributes(['min' => 1]);
+        CRUD::column('style_code')
+            ->type('text')
+            ->label('Style Code');
 
         CRUD::column([
             'name' => 'image',
@@ -102,6 +101,11 @@ class ProductCrudController extends CrudController
             'name' => 'image_4',
             'type' => 'image',
         ]);
+
+        // CRUD::column([
+        //     'name' => 'stock_status', 
+        //     'type' => 'text',
+        // ]);
     }
 
     /**
@@ -129,19 +133,39 @@ class ProductCrudController extends CrudController
         CRUD::field('description')
             ->type('textarea')
             ->label('Description')
-            ->wrapper(['class' => 'form-group col-md-6']);
-
-        CRUD::field('gsm')
-            ->type('number')
-            ->label('GSM')
-            ->attributes(['min' => 0])
-            ->wrapper(['class' => 'form-group col-md-6']);
-
-        CRUD::field('moq')
-            ->type('number')
-            ->label('MOQ')
-            ->attributes(['min' => 1])
             ->wrapper(['class' => 'form-group col-md-4']);
+
+        // CRUD::field('gsm')
+        //     ->type('number')
+        //     ->label('GSM')
+        //     ->attributes(['min' => 0])
+        //     ->wrapper(['class' => 'form-group col-md-6']);
+
+        // CRUD::field('moq')
+        //     ->type('number')
+        //     ->label('MOQ')
+        //     ->attributes(['min' => 1])
+        //     ->wrapper(['class' => 'form-group col-md-4']);
+
+        CRUD::field('fabric')
+            ->type('text')
+            ->label('Fabric')
+            ->wrapper(['class' => 'form-group col-md-4'])
+            ->attributes([
+                'oninput' => "this.value = this.value.replace(/[^a-zA-Z0-9\\s\\(\\)\\[\\]&-%]/g, '');",
+                'title' => 'Only alphabets, spaces, (), and [] are allowed',
+                'autocomplete' => 'off'
+            ]);
+
+        CRUD::field('style_code')
+            ->type('text')
+            ->label('Style Code')
+            ->wrapper(['class' => 'form-group col-md-4'])
+            ->attributes([
+                'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s\\(\\)\\[\\]&-%]/g, '');",
+                'title' => 'Only alphabets, spaces, (), and [] are allowed',
+                'autocomplete' => 'off'
+            ]);
 
         CRUD::field([
             'name' => 'image',
@@ -187,6 +211,16 @@ class ProductCrudController extends CrudController
                 'path' => 'uploads/product_images',
             ],
         ])->size(4);
+
+        // CRUD::field('stock_status')
+        //     ->type('select_from_array')
+        //     ->label('Stock Status')
+        //     ->options([
+        //         'in_stock' => 'In Stock',
+        //         'out_of_stock' => 'Out of Stock',
+        //     ])
+        //     ->default('-')
+        //     ->wrapper(['class' => 'form-group col-md-4']);
     }
 
     public function store()
@@ -234,64 +268,49 @@ class ProductCrudController extends CrudController
         CRUD::field('description')
             ->type('textarea')
             ->label('Description')
-            ->wrapper(['class' => 'form-group col-md-6']);
-
-        CRUD::field('gsm')
-            ->type('number')
-            ->label('GSM')
-            ->attributes(['min' => 0])
-            ->wrapper(['class' => 'form-group col-md-6']);
-
-        CRUD::field('moq')
-            ->type('number')
-            ->label('MOQ')
-            ->attributes(['min' => 1])
             ->wrapper(['class' => 'form-group col-md-4']);
 
-        CRUD::field([
-            'name' => 'image',
-            'type' => 'upload',
-            'withFiles' => [
-                'disk' => 'public_path',
-                'path' => 'uploads/product_images',
-            ],
-        ])->size(4);
+        // CRUD::field('gsm')
+        //     ->type('number')
+        //     ->label('GSM')
+        //     ->attributes(['min' => 0])
+        //     ->wrapper(['class' => 'form-group col-md-6']);
 
-        CRUD::field([
-            'name' => 'image_1',
-            'type' => 'upload',
-            'withFiles' => [
-                'disk' => 'public_path',
-                'path' => 'uploads/product_images',
-            ],
-        ])->size(4);
+        // CRUD::field('moq')
+        //     ->type('number')
+        //     ->label('MOQ')
+        //     ->attributes(['min' => 1])
+        //     ->wrapper(['class' => 'form-group col-md-4']);
 
-        CRUD::field([
-            'name' => 'image_2',
-            'type' => 'upload',
-            'withFiles' => [
-                'disk' => 'public_path',
-                'path' => 'uploads/product_images',
-            ],
-        ])->size(4);
+        CRUD::field('fabric')
+            ->type('text')
+            ->label('Fabric')
+            ->wrapper(['class' => 'form-group col-md-4'])
+            ->attributes([
+                'oninput' => "this.value = this.value.replace(/[^a-zA-Z0-9\\s\\(\\)\\[\\]&-%]/g, '');",
+                'title' => 'Only alphabets, spaces, (), and [] are allowed',
+                'autocomplete' => 'off'
+            ]);
 
-        CRUD::field([
-            'name' => 'image_3',
-            'type' => 'upload',
-            'withFiles' => [
-                'disk' => 'public_path',
-                'path' => 'uploads/product_images',
-            ],
-        ])->size(4);
+        CRUD::field('style_code')
+            ->type('text')
+            ->label('Style Code')
+            ->wrapper(['class' => 'form-group col-md-4'])
+            ->attributes([
+                'oninput' => "this.value = this.value.replace(/[^a-zA-Z0-9\\s\\(\\)\\[\\]&-]/g, '');",
+                'title' => 'Only alphabets, spaces, (), and [] are allowed',
+                'autocomplete' => 'off'
+            ]);
 
-        CRUD::field([
-            'name' => 'image_4',
-            'type' => 'upload',
-            'withFiles' => [
-                'disk' => 'public_path',
-                'path' => 'uploads/product_images',
-            ],
-        ])->size(4);
+        // CRUD::field('stock_status')
+        //     ->type('select_from_array')
+        //     ->label('Stock Status')
+        //     ->options([
+        //         'in_stock' => 'In Stock',
+        //         'out_of_stock' => 'Out of Stock',
+        //     ])
+        //     ->default('in_stock')
+        //     ->wrapper(['class' => 'form-group col-md-4']);
     }
 
     protected function setupReorderOperation()
