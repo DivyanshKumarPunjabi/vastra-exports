@@ -4,7 +4,6 @@
 
     <span class="text-muted fw-bold me-1">Enquiry Date:</span>
 
-
     <input type="date"
         name="from"
         value="{{ request('from') }}"
