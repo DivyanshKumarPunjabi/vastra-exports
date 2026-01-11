@@ -29,6 +29,8 @@ class EnquiryCrudController extends CrudController
         CRUD::setModel(\App\Models\Enquiry::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/enquiry');
         CRUD::setEntityNameStrings('enquiry', 'enquiries');
+
+        CRUD::addButtonFromView('top', 'date_filter', 'enquiry_date_filter', 'beginning');
     }
 
     /**
@@ -39,6 +41,12 @@ class EnquiryCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        if (request()->filled('from') && request()->filled('to')) {
+            CRUD::addClause('whereBetween', 'created_at', [
+                request('from') . ' 00:00:00',
+                request('to') . ' 23:59:59'
+            ]);
+        }
         CRUD::setFromDb(); // set columns from db columns.
 
         /**
