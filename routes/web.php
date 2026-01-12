@@ -19,7 +19,7 @@ Route::get('check-mail', function () {
 
         // 🔹 Sample client data
         $clientName  = "Divyansh Kumar Punjabi";
-        $clientEmail = "divyansh.punjabi@gmail.com";
+        $clientEmail = "divyansh.punjabi14@gmail.com";
 
         // 🔹 Email content (as requested)
         $finalMessage = "

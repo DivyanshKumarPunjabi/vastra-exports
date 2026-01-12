@@ -36,22 +36,16 @@ class EnquiryController extends ApiBaseController
                 return response()->json([
                     'success' => false,
                     'message' => $validator->errors()->first(),
-                    // 'errors'  => $validator->errors(),
                 ], 422);
             }
-
             $validated = $validator->validated();
-
-            Enquiry::create($validated);
-
+            $enquiry = Enquiry::create($validated);
             return response()->json([
-                // 'message' => 'Enquiry submitted successfully.',
+                'status' => 'SUCCESS',
+                'message' => 'Enquiry submitted successfully.',
                 'data' => [
-                    'success' => true,
-                    'message' => 'Enquiry submitted successfully.',
-                    // 'enquiry' => $enquiry->makeHidden(['created_at', 'updated_at']),
+                    $enquiry->makeHidden(['updated_at']),
                 ],
-                // 'data' => $enquiry->makeHidden(['created_at', 'updated_at']),
             ], 200);
         } catch (Exception $e) {
             Log::error('Enquiry submit error: ' . $e->getMessage());
