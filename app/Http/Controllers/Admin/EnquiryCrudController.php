@@ -16,7 +16,6 @@ class EnquiryCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     // use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
     // use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    // use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
     /**
@@ -48,7 +47,7 @@ class EnquiryCrudController extends CrudController
             ]);
         }
         CRUD::setFromDb(); // set columns from db columns.
-
+        CRUD::column('created_at')->label('Enquiry Date');
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');

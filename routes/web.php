@@ -23,20 +23,11 @@ Route::get('check-mail', function () {
 
         // 🔹 Email content (as requested)
         $finalMessage = "
-Dear {$clientName},
+        We have successfully received your enquiry, and our team is currently reviewing the details shared by you. One of our representatives will get in touch with you shortly to understand your requirements in detail and guide you through the next steps.
 
-Thank you for reaching out to Vastra. We appreciate your interest in our garment manufacturing and export services.
+        In the meantime, be prepared with any additional information, references, samples, or questions related to your requirements and our services that you would like to share with us. We will review those materials during a one-on-one meeting. This will help us assist you more efficiently.
 
-We have successfully received your enquiry, and our team is currently reviewing the details shared by you. One of our representatives will get in touch with you shortly to understand your requirements in detail and guide you through the next steps.
-
-In the meantime, be prepared with any additional information, references, samples, or questions related to your requirements and our services that you would like to share with us. We will review those materials during a one-on-one meeting. This will help us assist you more efficiently.
-
-We look forward to connecting with you and exploring how we can collaborate. Enjoy your journey towards becoming a sensational clothing brand.
-
-Warm regards,
-Team Vastra
-Garment Manufacturing & Private Label Solutions
-        ";
+        We look forward to connecting with you and exploring how we can collaborate. Enjoy your journey towards becoming a sensational clothing brand.";
 
         // 🔹 Mail data passed to Mailable
         // $mailData = [
