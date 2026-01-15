@@ -47,11 +47,26 @@ class EnquiryCrudController extends CrudController
             ]);
         }
         CRUD::setFromDb(); // set columns from db columns.
+        CRUD::column('first_name')->label('First Name');
+        CRUD::column('last_name')->label('Last Name');
+        CRUD::column('mobile')
+            ->label('Contact Number')
+            ->type('closure')
+            ->function(function ($entry) {
+
+                $code = $entry->country_code ? $entry->country_code . ' ' : '';
+
+                return $code . $entry->mobile;
+            });
+        CRUD::column('email')->label('Email Address');
+        CRUD::column('message')->label('Enquiry Message')->limit(1000);
         CRUD::column('created_at')->label('Enquiry Date');
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+        CRUD::removeColumn('country_code');
+    }
+
+    protected function setUpShowOperation()
+    {
+        $this->setupListOperation();
     }
 
     /**

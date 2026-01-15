@@ -26,7 +26,8 @@ class Enquiry extends Model
         'last_name',
         'email',
         'mobile',
-        'message'
+        'message',
+        'country_code'
     ];
     // protected $hidden = [];
 
