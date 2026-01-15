@@ -51,11 +51,9 @@ class HomePageController extends ApiBaseController
 
                 return $banner->makeHidden(['created_at', 'updated_at']);
             });
-            $latitude = 26.9851597;
-            $longitude = 75.7589829;
             $setting = Setting::all();
-            $mapEmbedUrl = "https://www.google.com/maps?q={$latitude},{$longitude}&z=15&output=embed";
-            $mapViewUrl  = "https://www.google.com/maps?q={$latitude},{$longitude}";
+            $mapEmbedUrl = "https://www.google.com/maps/place/Vastra+Exports/@26.9832167,75.7771583,185m/data=!3m1!1e3!4m6!3m5!1s0x396db36134569265:0xdc0212aec4a867a1!8m2!3d26.9831516!4d75.7773922!16s%2Fg%2F11ytcpggtx?entry=ttu&g_ep=EgoyMDI2MDEwNy4wIKXMDSoASAFQAw%3D%3D";
+            $mapViewUrl = "https://www.google.com/maps/place/Vastra+Exports/@26.9832167,75.7771583,185m/data=!3m1!1e3!4m6!3m5!1s0x396db36134569265:0xdc0212aec4a867a1!8m2!3d26.9831516!4d75.7773922!16s%2Fg%2F11ytcpggtx?entry=ttu&g_ep=EgoyMDI2MDEwNy4wIKXMDSoASAFQAw%3D%3D";
             $setting->makeHidden(['field', 'active', 'created_at', 'updated_at']);
             return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs, 'banners' => $banners, 'setting' => $setting, 'map' => [
                 'embed_url' => $mapEmbedUrl,   // ✅ for iframe

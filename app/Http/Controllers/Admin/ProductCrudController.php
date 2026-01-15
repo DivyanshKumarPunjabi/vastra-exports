@@ -34,6 +34,15 @@ class ProductCrudController extends CrudController
         CRUD::setModel(Product::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/product');
         CRUD::setEntityNameStrings('product', 'products');
+
+        CRUD::filter([
+            'name'  => 'title',
+            'type'  => 'text',
+            'label' => 'Product Name',
+        ], function () {
+        }, function ($value) {
+            $this->crud->addClause('where', 'title', $value);
+        });
     }
 
     /**
