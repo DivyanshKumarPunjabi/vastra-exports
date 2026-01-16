@@ -48,12 +48,24 @@ class HomePageController extends ApiBaseController
                     : null;
 
                 $banner->short_descp = trim(preg_replace("/\r|\n/", ' ', $banner->short_descp));
+                $banner->long_description = trim(preg_replace("/\r|\n/", ' ', $banner->long_description));
 
                 return $banner->makeHidden(['created_at', 'updated_at']);
             });
             $setting = Setting::all();
-            $mapEmbedUrl = "https://www.google.com/maps/place/Vastra+Exports/@26.9832167,75.7771583,185m/data=!3m1!1e3!4m6!3m5!1s0x396db36134569265:0xdc0212aec4a867a1!8m2!3d26.9831516!4d75.7773922!16s%2Fg%2F11ytcpggtx?entry=ttu&g_ep=EgoyMDI2MDEwNy4wIKXMDSoASAFQAw%3D%3D";
-            $mapViewUrl = "https://www.google.com/maps/place/Vastra+Exports/@26.9832167,75.7771583,185m/data=!3m1!1e3!4m6!3m5!1s0x396db36134569265:0xdc0212aec4a867a1!8m2!3d26.9831516!4d75.7773922!16s%2Fg%2F11ytcpggtx?entry=ttu&g_ep=EgoyMDI2MDEwNy4wIKXMDSoASAFQAw%3D%3D";
+            // Exact coordinates from your screenshot
+            $lat = 26.9831516;
+            $long = 75.7773922;
+            /**
+             * 1. Embed URL: This goes into <iframe src="...">
+             * The 'output=embed' part is what makes it work inside a frame.
+             */
+            $mapEmbedUrl = "https://maps.google.com/maps?q=$lat,$long&output=embed";
+            /**
+             * 2. View URL: This goes into <a href="...">
+             * This opens the full Google Maps site for the user.
+             */
+            $mapViewUrl = "https://www.google.com/maps?q=$lat,$long";
             $setting->makeHidden(['field', 'active', 'created_at', 'updated_at']);
             return $this->sendResponse(true, 'Home Page data found', ['blogs' => $blogs, 'banners' => $banners, 'setting' => $setting, 'map' => [
                 'embed_url' => $mapEmbedUrl,   // ✅ for iframe
