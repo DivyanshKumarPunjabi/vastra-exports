@@ -80,6 +80,7 @@ class BannerCrudController extends CrudController
         ])->size(6);
 
         CRUD::field('short_descp')->label('Short Description')->type('textarea')->size(6);
+        CRUD::field('long_description')->label('Long Description')->type('textarea')->size(6);
         CRUD::field('status')->label('Status')->type('checkbox')->size(6);
 
         $this->crud->replaceSaveActions([
@@ -121,6 +122,7 @@ class BannerCrudController extends CrudController
         ])->size(6);
 
         CRUD::field('short_descp')->label('Short Description')->type('textarea')->size(6);
+        CRUD::field('long_description')->label('Long Description')->type('textarea')->size(6);
         CRUD::field('status')->label('Status')->type('checkbox')->size(6);
 
         $this->crud->replaceSaveActions([
