@@ -75,9 +75,9 @@ class ProductCrudController extends CrudController
             });
 
         CRUD::column('description')
-            ->type('textarea')
+            ->type('text')
             ->label('Description')
-            ->limit(50);
+            ->limit(20);
 
         CRUD::column('fabric')
             ->type('text')
@@ -120,7 +120,62 @@ class ProductCrudController extends CrudController
 
     protected function setupShowOperation()
     {
-        $this->setupListOperation();
+        CRUD::column('title')
+            ->type('text')
+            ->label('Product Title');
+
+        CRUD::column('category_id')
+            ->label('Product Category')
+            ->type('text')
+            ->value(function ($entry) {
+
+                if (!$entry->category_id) {
+                    return '-';
+                }
+
+                $sp = ProductCategory::withoutGlobalScopes()
+                    ->find($entry->category_id);
+
+                return $sp ? $sp->name  : '-';
+            });
+
+        CRUD::column('description')
+            ->type('text')
+            ->label('Description')
+            ->limit(1000);
+
+        CRUD::column('fabric')
+            ->type('text')
+            ->label('Fabric');
+
+        CRUD::column('style_code')
+            ->type('text')
+            ->label('Style Code');
+
+        CRUD::column([
+            'name' => 'image',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_1',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_2',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_3',
+            'type' => 'image',
+        ]);
+
+        CRUD::column([
+            'name' => 'image_4',
+            'type' => 'image',
+        ]);
     }
 
     /**
