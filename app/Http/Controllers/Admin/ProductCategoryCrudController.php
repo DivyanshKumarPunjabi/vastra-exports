@@ -43,7 +43,7 @@ class ProductCategoryCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        $this->crud->addClause('orderBy', '_lft', 'asc');
+        $this->crud->addClause('orderBy', 'lft', 'asc');
         CRUD::column('name')->label('Category Name');
     }
 

@@ -63,11 +63,11 @@ return [
     'home_link' => 'admin',
 
     // Menu logo. You can replace this with an <img> tag if you have a logo.
-    // 'project_logo' => '<b>Vastra </b>Exports',
-    'project_logo' => '<img src="' . asset('assets/Logo.jpeg') . '"
-    class="project-logo"
-    style="max-width:100%; height:40%; background:#f5f5f5; padding:1rem 2rem;"
-    alt="Vastra-Exports">',
+    'project_logo' => '<b>Vastra </b>Exports',
+    // 'project_logo' => '<img src="' . asset('assets/Logo.jpeg') . '"
+    // class="project-logo"
+    // style="max-width:100%; height:40%; background:#f5f5f5; padding:1rem 2rem;"
+    // alt="Vastra-Exports">',
 
 
     // Show / hide breadcrumbs on admin panel pages.

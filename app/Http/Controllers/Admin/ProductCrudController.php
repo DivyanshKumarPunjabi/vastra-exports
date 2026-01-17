@@ -35,14 +35,14 @@ class ProductCrudController extends CrudController
         CRUD::setRoute(config('backpack.base.route_prefix') . '/product');
         CRUD::setEntityNameStrings('product', 'products');
 
-        CRUD::filter([
-            'name'  => 'title',
-            'type'  => 'text',
-            'label' => 'Product Name',
-        ], function () {
-        }, function ($value) {
-            $this->crud->addClause('where', 'title', $value);
-        });
+        // CRUD::filter([
+        //     'name'  => 'title',
+        //     'type'  => 'text',
+        //     'label' => 'Product Name',
+        // ], function () {
+        // }, function ($value) {
+        //     $this->crud->addClause('where', 'title', $value);
+        // });
     }
 
     /**
@@ -54,6 +54,7 @@ class ProductCrudController extends CrudController
     protected function setupListOperation()
     {
         $this->crud->disableResponsiveTable();
+        $this->crud->addClause('orderBy', 'lft', 'asc');
         CRUD::column('title')
             ->type('text')
             ->label('Product Title');
