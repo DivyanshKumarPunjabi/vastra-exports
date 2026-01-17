@@ -317,6 +317,51 @@ class ProductCrudController extends CrudController
                 'autocomplete' => 'off'
             ]);
 
+        CRUD::field([
+            'name' => 'image',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_1',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_2',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_3',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
+        CRUD::field([
+            'name' => 'image_4',
+            'type' => 'upload',
+            'withFiles' => [
+                'disk' => 'public_path',
+                'path' => 'uploads/product_images',
+            ],
+        ])->size(4);
+
         // CRUD::field('stock_status')
         //     ->type('select_from_array')
         //     ->label('Stock Status')

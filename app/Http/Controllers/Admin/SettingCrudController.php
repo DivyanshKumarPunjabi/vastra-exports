@@ -32,6 +32,8 @@ class SettingCrudController extends CrudController
             [
                 'name'  => 'value',
                 'label' => 'Value',
+                'type'  => 'link',
+                
             ],
             [
                 'name'  => 'description',
