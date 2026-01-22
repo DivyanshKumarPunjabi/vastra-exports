@@ -2,12 +2,29 @@
 
 use App\Mail\EnquiryConfirmedMail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('get-the-google-reviews', function () {
+    $response = Http::get(
+        "https://maps.googleapis.com/maps/api/place/details/json",
+        [
+            'place_id' => env('GOOGLE_PLACE_ID'),
+            'fields'   => 'name,rating,reviews',
+            'key'      => env('GOOGLE_API_KEY'),
+        ]
+    );
+
+    $data = $response->json();
+    dd($data);
+});
+
+
 
 Route::get('make-hash', function () {
     $hash = Hash::make('123456');
