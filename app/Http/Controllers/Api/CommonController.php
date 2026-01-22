@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Blog;
+use App\Models\GoogleReview;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Exception;
@@ -444,5 +445,17 @@ class CommonController extends ApiBaseController
         ]);
 
         return $product;
+    }
+
+    public function getAllReviews()
+    {
+        try {
+            $reviews = GoogleReview::all();
+            $reviews->makeHidden(['google_review_id', 'updated_at', 'created_at']);
+            return $this->sendResponse(true, 'Reviews data found', ['reviews' => $reviews]);
+        } catch (Exception $e) {
+            Log::error('error in getAllReviews', ['message' => $e->getMessage()]);
+            return $this->sendCatchLog($e->getMessage());
+        }
     }
 }
