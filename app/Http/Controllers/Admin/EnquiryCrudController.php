@@ -46,7 +46,7 @@ class EnquiryCrudController extends CrudController
                 request('to') . ' 23:59:59'
             ]);
         }
-        CRUD::setFromDb(); // set columns from db columns.
+        $this->crud->disableResponsiveTable();
         CRUD::column('first_name')->label('First Name');
         CRUD::column('last_name')->label('Last Name');
         CRUD::column('mobile')
@@ -59,14 +59,28 @@ class EnquiryCrudController extends CrudController
                 return $code . $entry->mobile;
             });
         CRUD::column('email')->label('Email Address');
-        CRUD::column('message')->label('Enquiry Message')->limit(1000);
+        CRUD::column('message')->label('Enquiry Message')->limit(50);
         CRUD::column('created_at')->label('Enquiry Date');
         CRUD::removeColumn('country_code');
     }
 
     protected function setUpShowOperation()
     {
-        $this->setupListOperation();
+        CRUD::column('first_name')->label('First Name');
+        CRUD::column('last_name')->label('Last Name');
+        CRUD::column('mobile')
+            ->label('Contact Number')
+            ->type('closure')
+            ->function(function ($entry) {
+
+                $code = $entry->country_code ? $entry->country_code . ' ' : '';
+
+                return $code . $entry->mobile;
+            });
+        CRUD::column('email')->label('Email Address');
+        CRUD::column('message')->label('Enquiry Message')->limit(50);
+        CRUD::column('created_at')->label('Enquiry Date');
+        CRUD::removeColumn('country_code');
     }
 
     /**

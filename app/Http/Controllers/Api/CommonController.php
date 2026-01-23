@@ -231,41 +231,6 @@ class CommonController extends ApiBaseController
         }
     }
 
-    // public function getAllProducts()
-    // {
-    //     try {
-    //         $products = Product::with('category:id,name')
-    //             ->orderBy('lft', 'ASC')
-    //             ->get()
-    //             ->map(function ($product) {
-    //                 $product->category_name = $product->category->name ?? null;
-
-    //                 // hide unwanted fields
-    //                 $product->makeHidden([
-    //                     'created_at',
-    //                     'updated_at',
-    //                     'parent_id',
-    //                     'lft',
-    //                     'rgt',
-    //                     'depth',
-    //                     'category',
-    //                 ]);
-
-    //                 return $product;
-    //             });
-
-    //         return $this->sendResponse(true, 'Products data found', [
-    //             'products_data' => $products
-    //         ]);
-    //     } catch (Exception $e) {
-    //         Log::error('error in getAllProducts', [
-    //             'message' => $e->getMessage()
-    //         ]);
-
-    //         return $this->sendCatchLog($e->getMessage());
-    //     }
-    // }
-
     public function getAllProducts()
     {
         try {
@@ -316,54 +281,6 @@ class CommonController extends ApiBaseController
         }
     }
 
-
-    // public function getProductDetails(Request $request)
-    // {
-    //     try {
-    //         $validator = Validator::make($request->all(), [
-    //             'product_id' => 'required|exists:products,id',
-    //         ], [
-    //             'product_id.required' => 'Product ID is required.',
-    //             'product_id.exists'   => 'Product not found.',
-    //         ]);
-
-    //         if ($validator->fails()) {
-    //             return $this->sendResponse(false, $validator->errors()->first());
-    //         }
-
-    //         $product = Product::with('category:id,name')
-    //             ->where('id', $request->product_id)
-    //             ->first();
-
-    //         $relatedProducts = Product::where('category_id', $product->category_id)
-    //             ->with('category:id,name')
-    //             ->where('id', '!=', $product->id)
-    //             ->select('id', 'title', 'category_id')
-    //             ->get();
-
-    //         $productData = $product->makeHidden([
-    //             'created_at',
-    //             'updated_at',
-    //             'parent_id',
-    //             'lft',
-    //             'rgt',
-    //             'depth',
-    //             'category',
-    //             'gsm',
-    //             'moq',
-    //         ]);
-
-    //         $productData->category_name = $product->category->name ?? null;
-
-    //         return $this->sendResponse(true, 'Product data found', [
-    //             'product'          => $productData,
-    //             'related_products' => $relatedProducts,
-    //         ]);
-    //     } catch (Exception $e) {
-    //         Log::error('error in getProductDetails', ['message' => $e->getMessage()]);
-    //         return $this->sendCatchLog($e->getMessage());
-    //     }
-    // }
 
     public function getProductDetails(Request $request)
     {
