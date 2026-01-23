@@ -57,7 +57,7 @@ class ProductCrudController extends CrudController
         $this->crud->addClause('orderBy', 'lft', 'asc');
         CRUD::column('title')
             ->type('text')
-            ->label('Product Title');
+            ->label('Product Title')->limit(1000);
 
         CRUD::column('category_id')
             ->label('Product Category')
