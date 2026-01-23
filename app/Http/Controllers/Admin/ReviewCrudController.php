@@ -77,7 +77,7 @@ class ReviewCrudController extends CrudController
 
         CRUD::column('review_text')
             ->type('text')
-            ->label('Review Content');
+            ->label('Review Content')->limit(10000);
 
         CRUD::column('review_time')
             ->type('text')
