@@ -53,6 +53,12 @@ class ProductCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        CRUD::addButtonFromView(
+            'top',
+            'product_filter',
+            'product_filter',
+            'beginning'
+        );
         $this->crud->disableResponsiveTable();
         $this->crud->addClause('orderBy', 'lft', 'asc');
         CRUD::column('title')
@@ -111,12 +117,33 @@ class ProductCrudController extends CrudController
             'name' => 'image_4',
             'type' => 'image',
         ]);
+        $this->applyProductFilters();
 
         // CRUD::column([
         //     'name' => 'stock_status', 
         //     'type' => 'text',
         // ]);
     }
+
+    protected function applyProductFilters()
+    {
+        if ($title = request('title')) {
+            CRUD::addClause('where', 'title', 'like', "%{$title}%");
+        }
+
+        if ($category = request('category_id')) {
+            CRUD::addClause('where', 'category_id', $category);
+        }
+
+        if ($fabric = request('fabric')) {
+            CRUD::addClause('where', 'fabric', 'like', "%{$fabric}%");
+        }
+
+        if ($styleCode = request('style_code')) {
+            CRUD::addClause('where', 'style_code', 'like', "%{$styleCode}%");
+        }
+    }
+
 
     protected function setupShowOperation()
     {

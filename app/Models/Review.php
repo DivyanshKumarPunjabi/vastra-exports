@@ -5,13 +5,11 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Kalnoy\Nestedset\NodeTrait;
 
-class ProductCategory extends Model
+class Review extends Model
 {
     use CrudTrait;
     use HasFactory;
-    use NodeTrait;
 
     /*
     |--------------------------------------------------------------------------
@@ -19,7 +17,7 @@ class ProductCategory extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'product_categories';
+    protected $table = 'reviews';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -55,15 +53,4 @@ class ProductCategory extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
-    public function showCategoryProducts()
-    {
-        $url = backpack_url('product') . '?category_id=' . $this->id;
-
-        return '<a href="' . $url . '"
-              class="btn btn-sm btn-outline-primary"
-              data-toggle="tooltip"
-              title="View products under this category">
-                <i class="la la-box-open"></i> View Products
-            </a>';
-    }
 }

@@ -43,6 +43,7 @@ class ProductCategoryCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        CRUD::addButtonFromModelFunction('line', 'admin_approval', 'showCategoryProducts', 'first');
         $this->crud->addClause('orderBy', 'lft', 'asc');
         CRUD::column('name')->label('Category Name');
     }

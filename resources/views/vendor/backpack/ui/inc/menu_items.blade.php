@@ -6,3 +6,4 @@
 <x-backpack::menu-item title="Banners" icon="la la-image" :link="backpack_url('banner')" />
 <x-backpack::menu-item title="Products" icon="la la-cubes" :link="backpack_url('product')" />
 <x-backpack::menu-item title="Product categories" icon="la la-tags" :link="backpack_url('product-category')" />
+<x-backpack::menu-item title="Reviews" icon="la la-star" :link="backpack_url('review')" />

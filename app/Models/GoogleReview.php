@@ -31,4 +31,22 @@ class GoogleReview extends Model
         'review_time',
         'profile_photo_url',
     ];
+
+    public function getRatingStars()
+    {
+        $rating = (int) $this->rating;
+        $maxStars = 5;
+
+        $stars = '<span class="d-inline-flex gap-1">';
+
+        for ($i = 1; $i <= $maxStars; $i++) {
+            $stars .= $i <= $rating
+                ? '<i class="la la-star text-warning"></i>'
+                : '<i class="la la-star text-muted"></i>';
+        }
+
+        $stars .= '</span>';
+
+        return $stars;
+    }
 }
