@@ -18,5 +18,6 @@ Route::get('get-all-product-categories', [CommonController::class, 'getProductCa
 Route::post('get-blog-details',[CommonController::class, 'getBlogDetails']);
 Route::post('search-items',[CommonController::class, 'getItemsSearch']);
 Route::get('get-all-product',[CommonController::class, 'getAllProducts']);
+Route::get('get-all-product-v2',[CommonController::class, 'getAllProductsV2']);
 Route::post('get-product-details',[CommonController::class, 'getProductDetails']);
 Route::get('get-all-reviews',[CommonController::class, 'getAllReviews']);

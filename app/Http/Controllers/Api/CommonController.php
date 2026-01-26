@@ -282,71 +282,71 @@ class CommonController extends ApiBaseController
         }
     }
 
-    // public function getAllProducts()
-    // {
-    //     try {
-    //         $perPage = 12;
-    //         $page = request()->get('page', 1);
-    //         $limit = $page * $perPage;
+    public function getAllProductsV2()
+    {
+        try {
+            $perPage = 12;
+            $page = request()->get('page', 1);
+            $limit = $page * $perPage;
 
-    //         $query = Product::with('category:id,name')
-    //             ->orderBy('lft', 'ASC');
+            $query = Product::with('category:id,name')
+                ->orderBy('lft', 'ASC');
 
-    //         $total = $query->count();
+            $total = $query->count();
 
-    //         $products = $query
-    //             ->limit($limit)
-    //             ->get()
-    //             ->map(function ($product) {
+            $products = $query
+                ->limit($limit)
+                ->get()
+                ->map(function ($product) {
 
-    //                 // Category name
-    //                 $product->category_name = $product->category->name ?? null;
+                    // Category name
+                    $product->category_name = $product->category->name ?? null;
 
-    //                 // Images array
-    //                 $images = [];
-    //                 foreach (['image', 'image_1', 'image_2', 'image_3', 'image_4'] as $field) {
-    //                     if (!empty($product->$field)) {
-    //                         $images[] = asset($product->$field);
-    //                     }
-    //                 }
-    //                 $product->images = $images;
+                    // Images array
+                    $images = [];
+                    foreach (['image', 'image_1', 'image_2', 'image_3', 'image_4'] as $field) {
+                        if (!empty($product->$field)) {
+                            $images[] = asset($product->$field);
+                        }
+                    }
+                    $product->images = $images;
 
-    //                 // Hide unwanted fields
-    //                 $product->makeHidden([
-    //                     'image',
-    //                     'image_1',
-    //                     'image_2',
-    //                     'image_3',
-    //                     'image_4',
-    //                     'created_at',
-    //                     'updated_at',
-    //                     'parent_id',
-    //                     'lft',
-    //                     'rgt',
-    //                     'depth',
-    //                     'category',
-    //                 ]);
+                    // Hide unwanted fields
+                    $product->makeHidden([
+                        'image',
+                        'image_1',
+                        'image_2',
+                        'image_3',
+                        'image_4',
+                        'created_at',
+                        'updated_at',
+                        'parent_id',
+                        'lft',
+                        'rgt',
+                        'depth',
+                        'category',
+                    ]);
 
-    //                 return $product;
-    //             });
+                    return $product;
+                });
 
-    //         // Manual paginator
-    //         $paginator = new LengthAwarePaginator(
-    //             $products,
-    //             $total,
-    //             $perPage,
-    //             $page,
-    //             ['path' => request()->url(), 'query' => request()->query()]
-    //         );
+            // Manual paginator
+            $paginator = new LengthAwarePaginator(
+                $products,
+                $total,
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
 
-    //         return $this->sendResponse(true, 'Products data found', [
-    //             'products_data' => $paginator
-    //         ]);
-    //     } catch (Exception $e) {
-    //         Log::error('error in getAllProducts', ['message' => $e->getMessage()]);
-    //         return $this->sendCatchLog($e->getMessage());
-    //     }
-    // }
+            return $this->sendResponse(true, 'Products data found', [
+                'products_data' => $paginator
+            ]);
+        } catch (Exception $e) {
+            Log::error('error in getAllProducts', ['message' => $e->getMessage()]);
+            return $this->sendCatchLog($e->getMessage());
+        }
+    }
 
 
     public function getProductDetails(Request $request)
