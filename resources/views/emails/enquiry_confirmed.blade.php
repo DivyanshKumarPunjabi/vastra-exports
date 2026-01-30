@@ -12,7 +12,7 @@
 <p>Dear {{ $first_name ?? 'Customer' }},</p>
 
 <p>
-    Thank you for reaching out to <strong>Vastra</strong>. We appreciate your interest in our garment manufacturing and export services.
+    Thank you for reaching out to <strong>Vastra Exports</strong>. We appreciate your interest in our garment manufacturing and export services.
 </p>
 
 <p>

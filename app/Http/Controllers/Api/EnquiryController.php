@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\EnquiryConfirmedMail;
+use App\Mail\EnquiryConfirmedMailAdmin;
+use App\Mail\EnquiryNotificationMailAdmin;
 
 class EnquiryController extends ApiBaseController
 {
@@ -43,10 +45,33 @@ class EnquiryController extends ApiBaseController
                 ], 422);
             }
             $validated = $validator->validated();
-            $enquiry = Enquiry::create($validated);
+
+
+            // $enquiry = Enquiry::create($validated);
 
             $clientName = $validated['first_name'] . ' ' . $validated['last_name'];
             $clientEmail = $validated['email'];
+
+            $adminMailData = [
+                'first_name'       => 'Admin',
+                'heading1'         => 'New Enquiry Received',
+                'content'          => "
+                    Name: {$clientName}
+                    Email: {$validated['email']}
+                    Mobile: {$validated['country_code']} {$validated['mobile']}
+                    Message: {$validated['message']}
+                ",
+                'image'            => '',
+                'white_logo'       => '',
+                'content_footnote' => '',
+                'to'               => config('mail.admin_email'),
+                'cc'               => '',
+            ];
+
+            $adminEmail = 'info@vastraexports.com';
+
+            Mail::to($adminEmail)
+                ->send(new EnquiryConfirmedMailAdmin($adminMailData));
 
             $finalMessage = "We have successfully received your enquiry, and our team is currently reviewing the details shared by you. One of our representatives will get in touch with you shortly to understand your requirements in detail and guide you through the next steps.
 
@@ -67,11 +92,30 @@ class EnquiryController extends ApiBaseController
 
             Mail::to($clientEmail)
                 ->send(new EnquiryConfirmedMail($contactData));
+
+            // $adminMailData = [
+            //     'first_name'       => 'Admin',
+            //     'heading1'         => 'New Enquiry Received',
+            //     'content'          => "
+            //         Name: {$clientName}
+            //         Email: {$validated['email']}
+            //         Mobile: {$validated['country_code']} {$validated['mobile']}
+            //         Message: {$validated['message']}
+            //     ",
+            //     'image'            => '',
+            //     'white_logo'       => '',
+            //     'content_footnote' => '',
+            //     'to'               => config('mail.admin_email'),
+            //     'cc'               => '',
+            // ];
+
+            // Mail::to($adminMailData['to'])
+            //     ->send(new EnquiryNotificationMailAdmin($adminMailData));
             return response()->json([
                 'status' => 'SUCCESS',
                 'message' => 'Enquiry submitted successfully.',
                 'data' => [
-                    $enquiry->makeHidden(['updated_at', 'id', 'created_at']),
+                    // $enquiry->makeHidden(['updated_at', 'id', 'created_at']),
                 ],
             ], 200);
         } catch (Exception $e) {
