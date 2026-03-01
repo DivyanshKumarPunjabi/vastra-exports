@@ -213,17 +213,53 @@ class CommonController extends ApiBaseController
             /* ================= PRODUCT SEARCH ================= */
             if ($type === 'product') {
 
-                $results = Product::where(function ($q) use ($query) {
-                    $q->where('title', 'LIKE', "%{$query}%")
-                        ->orWhere('description', 'LIKE', "%{$query}%");
-                })
-                    ->orderBy('id', 'desc')
-                    ->limit(20)
-                    ->get();
+                $perPage = 12;
+
+                $queryBuilder = Product::with('category:id,name')
+                    ->where(function ($q) use ($query) {
+                        $q->where('title', 'LIKE', "%{$query}%")
+                            ->orWhere('description', 'LIKE', "%{$query}%");
+                    })
+                    ->orderBy('id', 'desc');
+
+                $products = $queryBuilder->paginate($perPage);
+
+                $products->getCollection()->transform(function ($product) {
+
+                    // Category name
+                    $product->category_name = $product->category->name ?? null;
+
+                    // Images array
+                    $images = [];
+                    foreach (['image', 'image_1', 'image_2', 'image_3', 'image_4'] as $field) {
+                        if (!empty($product->$field)) {
+                            $images[] = asset($product->$field);
+                        }
+                    }
+                    $product->images = $images;
+
+                    // Hide unwanted fields
+                    $product->makeHidden([
+                        'image',
+                        'image_1',
+                        'image_2',
+                        'image_3',
+                        'image_4',
+                        'created_at',
+                        'updated_at',
+                        'parent_id',
+                        'lft',
+                        'rgt',
+                        'depth',
+                        'category',
+                    ]);
+
+                    return $product;
+                });
 
                 return $this->sendResponse(true, 'Product search results found', [
                     'type'    => 'product',
-                    'results' => $results,
+                    'results' => $products,
                 ]);
             }
         } catch (Exception $e) {
