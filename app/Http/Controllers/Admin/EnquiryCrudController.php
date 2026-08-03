@@ -78,7 +78,7 @@ class EnquiryCrudController extends CrudController
                 return $code . $entry->mobile;
             });
         CRUD::column('email')->label('Email Address');
-        CRUD::column('message')->label('Enquiry Message')->limit(50);
+        CRUD::column('message')->label('Enquiry Message')->limit(5000);
         CRUD::column('created_at')->label('Enquiry Date');
         CRUD::removeColumn('country_code');
     }
